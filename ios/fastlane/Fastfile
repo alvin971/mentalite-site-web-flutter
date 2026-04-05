@@ -3,7 +3,6 @@ default_platform(:ios)
 platform :ios do
   desc "Build, signe et upload vers TestFlight (utilisé par GitHub Actions)"
   lane :release do
-    # Authentification Apple via API key
     api_key = app_store_connect_api_key(
       key_id: ENV["APP_STORE_KEY_ID"],
       issuer_id: ENV["APP_STORE_ISSUER_ID"],
@@ -12,13 +11,13 @@ platform :ios do
       in_house: false,
     )
 
-    # Créer/télécharger automatiquement le certificat de distribution via l'API
+    # Télécharger/créer le certificat de distribution
     cert(
       api_key: api_key,
       team_id: ENV["APPLE_TEAM_ID"],
     )
 
-    # Créer/télécharger automatiquement le profil de provisionnement
+    # Télécharger/créer le profil de provisionnement (stocke l'UUID dans ENV["SIGH_UUID"])
     sigh(
       api_key: api_key,
       app_identifier: ENV["BUNDLE_ID"],
@@ -26,17 +25,33 @@ platform :ios do
       force: true,
     )
 
-    # Incrémenter le build number (évite les conflits sur TestFlight)
+    # Configurer le projet Xcode avec le bon profil (manuel, pas automatique)
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "Runner.xcodeproj",
+      team_id: ENV["APPLE_TEAM_ID"],
+      bundle_identifier: ENV["BUNDLE_ID"],
+      code_sign_identity: "iPhone Distribution",
+      profile_uuid: ENV["SIGH_UUID"],
+    )
+
+    # Incrémenter le build number
     increment_build_number(
       xcodeproj: "Runner.xcodeproj",
     )
 
-    # Compiler et signer l'app
+    # Compiler et archiver
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
       export_method: "app-store",
-      xcargs: "DEVELOPMENT_TEAM=#{ENV['APPLE_TEAM_ID']} PRODUCT_BUNDLE_IDENTIFIER=#{ENV['BUNDLE_ID']}",
+      export_options: {
+        provisioningProfiles: {
+          ENV["BUNDLE_ID"] => ENV["SIGH_UUID"],
+        },
+        signingStyle: "manual",
+        teamID: ENV["APPLE_TEAM_ID"],
+      },
       output_directory: "./build",
       output_name: "mentalite.ipa",
     )
@@ -49,17 +64,5 @@ platform :ios do
     )
 
     UI.success("Build uploadé sur TestFlight avec succès !")
-  end
-
-  desc "Build local uniquement (sans upload, pour test)"
-  lane :build do
-    build_app(
-      workspace: "Runner.xcworkspace",
-      scheme: "Runner",
-      export_method: "app-store",
-      output_directory: "./build",
-      output_name: "mentalite.ipa",
-    )
-    UI.success("Build terminé : ios/build/mentalite.ipa")
   end
 end
