@@ -1,0 +1,6 @@
+# Appfile.example — Copier vers Appfile (gitignored) et remplir les valeurs
+# Ne JAMAIS committer le fichier Appfile réel (il est dans .gitignore)
+
+app_identifier "com.mentalite.app"   # Bundle ID de l'app sur App Store Connect
+apple_id "ton@email.com"             # Ton Apple ID
+team_id "XXXXXXXXXX"                 # Team ID (visible sur developer.apple.com)

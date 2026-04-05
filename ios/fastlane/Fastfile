@@ -1,0 +1,65 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Build, signe et upload vers TestFlight (utilisé par GitHub Actions)"
+  lane :release do
+    # Authentification Apple via API key
+    api_key = app_store_connect_api_key(
+      key_id: ENV["APP_STORE_KEY_ID"],
+      issuer_id: ENV["APP_STORE_ISSUER_ID"],
+      key_filepath: ENV["APP_STORE_API_KEY_PATH"],
+      duration: 1200,
+      in_house: false,
+    )
+
+    # Créer/télécharger automatiquement le certificat de distribution via l'API
+    cert(
+      api_key: api_key,
+      team_id: ENV["APPLE_TEAM_ID"],
+    )
+
+    # Créer/télécharger automatiquement le profil de provisionnement
+    sigh(
+      api_key: api_key,
+      app_identifier: ENV["BUNDLE_ID"],
+      team_id: ENV["APPLE_TEAM_ID"],
+      force: true,
+    )
+
+    # Incrémenter le build number (évite les conflits sur TestFlight)
+    increment_build_number(
+      xcodeproj: "Runner.xcodeproj",
+    )
+
+    # Compiler et signer l'app
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store",
+      xcargs: "DEVELOPMENT_TEAM=#{ENV['APPLE_TEAM_ID']} PRODUCT_BUNDLE_IDENTIFIER=#{ENV['BUNDLE_ID']}",
+      output_directory: "./build",
+      output_name: "mentalite.ipa",
+    )
+
+    # Upload vers TestFlight
+    upload_to_testflight(
+      api_key: api_key,
+      ipa: "./build/mentalite.ipa",
+      skip_waiting_for_build_processing: true,
+    )
+
+    UI.success("Build uploadé sur TestFlight avec succès !")
+  end
+
+  desc "Build local uniquement (sans upload, pour test)"
+  lane :build do
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store",
+      output_directory: "./build",
+      output_name: "mentalite.ipa",
+    )
+    UI.success("Build terminé : ios/build/mentalite.ipa")
+  end
+end
