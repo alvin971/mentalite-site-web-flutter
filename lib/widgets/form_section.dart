@@ -322,7 +322,7 @@ class _FormSectionState extends State<FormSection> {
                             const SizedBox(width: 10),
                             Expanded(
                               child: Text(
-                                'J\'accepte les conditions d\'utilisation et la politique de confidentialité de Mentality.',
+                                'J\'accepte les conditions d\'utilisation et la politique de confidentialité de Mental E.T.',
                                 style: AppText.sans(
                                   size: 13,
                                   color: AppColors.textSecondary,

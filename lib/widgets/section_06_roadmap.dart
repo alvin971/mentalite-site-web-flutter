@@ -80,7 +80,7 @@ class Section06Roadmap extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Mentality est en développement actif. Voici ce qui est déjà disponible et ce que nous construisons.',
+                'Mental E.T. est en développement actif. Voici ce qui est déjà disponible et ce que nous construisons.',
                 style: AppText.sans(
                   size: 15,
                   color: AppColors.textSecondary,

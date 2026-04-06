@@ -24,7 +24,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Mentality — La première plateforme de psychologie complète et gratuite',
+      title: 'Mental E.T. — La première plateforme de psychologie complète et gratuite',
       debugShowCheckedModeBanner: false,
       routerConfig: _router,
       theme: ThemeData(

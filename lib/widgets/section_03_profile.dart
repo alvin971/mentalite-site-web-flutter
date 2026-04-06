@@ -99,7 +99,7 @@ class Section03Profile extends StatelessWidget {
 
   Widget _buildBodyText() {
     return Text(
-      'Mentality génère un profil cognitif complet à partir de vos résultats — quatre indices mesurés avec la même rigueur que lors d\'une évaluation clinique.',
+      'Mental E.T. génère un profil cognitif complet à partir de vos résultats — quatre indices mesurés avec la même rigueur que lors d\'une évaluation clinique.',
       style: AppText.sans(
         size: 15,
         color: AppColors.textSecondary,

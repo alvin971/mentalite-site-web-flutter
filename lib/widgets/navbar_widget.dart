@@ -200,7 +200,7 @@ class _LogoWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Mentality',
+              'Mental E.T.',
               style: AppText.serif(
                 size: 22,
                 weight: FontWeight.w600,
@@ -349,7 +349,7 @@ class _ReserveButton extends StatelessWidget {
   }
 }
 
-class _MobileDrawer extends StatelessWidget {
+class _MobileDrawer extends StatefulWidget {
   final VoidCallback onClose;
   final VoidCallback? onReserve;
   final VoidCallback? onScrollToTests;
@@ -363,75 +363,79 @@ class _MobileDrawer extends StatelessWidget {
   });
 
   @override
+  State<_MobileDrawer> createState() => _MobileDrawerState();
+}
+
+class _MobileDrawerState extends State<_MobileDrawer>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+  late Animation<double> _fade;
+  late Animation<Offset> _slide;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+    _slide = Tween<Offset>(
+      begin: const Offset(0, -0.04),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
+    _ctrl.forward();
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onClose,
-      child: Container(
-        width: double.infinity,
-        height: MediaQuery.of(context).size.height,
-        color: Colors.black.withValues(alpha: 0.4),
-        child: Align(
-          alignment: Alignment.topRight,
-          child: GestureDetector(
-            onTap: () {}, // Prevent close when tapping inside
-            child: Container(
-              width: 280,
-              color: AppColors.bg,
-              padding: const EdgeInsets.all(24),
-              child: SafeArea(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Menu',
-                          style: AppText.serif(size: 18, weight: FontWeight.w600, color: AppColors.text),
-                        ),
-                        GestureDetector(
-                          onTap: onClose,
-                          child: Icon(Icons.close, size: 22, color: AppColors.accent),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 32),
-                    _DrawerLink(
-                      label: 'Les tests',
-                      onTap: onScrollToTests,
-                    ),
-                    const SizedBox(height: 20),
-                    _DrawerLink(
-                      label: 'Accompagnement',
-                      onTap: onScrollToAccompagnement,
-                    ),
-                    const SizedBox(height: 32),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: onReserve,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.accent,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: Text(
-                          'Réserver mon accès',
-                          style: AppText.sans(
-                            size: 14,
-                            weight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+    return FadeTransition(
+      opacity: _fade,
+      child: SlideTransition(
+        position: _slide,
+        child: Container(
+          width: double.infinity,
+          height: MediaQuery.of(context).size.height,
+          color: const Color(0xFF0B1F17),
+          child: SafeArea(
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 16,
+                  right: 20,
+                  child: GestureDetector(
+                    onTap: widget.onClose,
+                    child: const Icon(Icons.close, size: 28, color: Colors.white),
+                  ),
                 ),
-              ),
+                Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _FullscreenMenuLink(
+                        label: 'Les tests',
+                        onTap: widget.onScrollToTests,
+                      ),
+                      const SizedBox(height: 32),
+                      _FullscreenMenuLink(
+                        label: 'Accompagnement',
+                        onTap: widget.onScrollToAccompagnement,
+                      ),
+                      const SizedBox(height: 32),
+                      _FullscreenMenuLink(
+                        label: 'Réserver',
+                        onTap: widget.onReserve,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -440,11 +444,11 @@ class _MobileDrawer extends StatelessWidget {
   }
 }
 
-class _DrawerLink extends StatelessWidget {
+class _FullscreenMenuLink extends StatelessWidget {
   final String label;
   final VoidCallback? onTap;
 
-  const _DrawerLink({required this.label, this.onTap});
+  const _FullscreenMenuLink({required this.label, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -452,7 +456,11 @@ class _DrawerLink extends StatelessWidget {
       onTap: onTap,
       child: Text(
         label,
-        style: AppText.sans(size: 16, color: AppColors.accent, weight: FontWeight.w500),
+        style: AppText.serif(
+          size: 32,
+          color: Colors.white,
+          weight: FontWeight.w400,
+        ),
       ),
     );
   }

@@ -101,7 +101,7 @@ class FooterWidget extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                '© 2025 Mentality. Tous droits réservés.',
+                '© 2025 Mental E.T. Tous droits réservés.',
                 style: AppText.sans(size: 13, color: AppColors.footerMuted),
               ),
             ],
@@ -119,7 +119,7 @@ class _FooterBrand extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Mentality',
+          'Mental E.T.',
           style: AppText.serif(
             size: 22,
             color: AppColors.footerText,

@@ -219,7 +219,7 @@ class _FreeCard extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Avec Mentality, l\'accès est entièrement',
+                  'Avec Mental E.T., l\'accès est entièrement',
                   style: AppText.sans(
                     size: 14,
                     color: const Color(0xCCFFFFFF),

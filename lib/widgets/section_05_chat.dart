@@ -211,7 +211,7 @@ class _ChatCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Mentality',
+                        'Mental E.T.',
                         style: AppText.sans(
                           size: 14,
                           weight: FontWeight.w600,

@@ -16,7 +16,7 @@ class Section08Ethics extends StatelessWidget {
       Icons.warning_amber_rounded,
       Color(0x1FAA8800),
       'Pas un outil de diagnostic',
-      'Mentality ne diagnostique pas. Il éclaire, accompagne, informe.',
+      'Mental E.T. ne diagnostique pas. Il éclaire, accompagne, informe.',
     ),
     (
       Icons.lock_outline,
@@ -34,7 +34,7 @@ class Section08Ethics extends StatelessWidget {
       Icons.arrow_circle_right_outlined,
       AppColors.accentDim,
       'Orienté vers le soin',
-      'Mentality vous aide à trouver des professionnels qualifiés.',
+      'Mental E.T. vous aide à trouver des professionnels qualifiés.',
     ),
     (
       Icons.science_outlined,

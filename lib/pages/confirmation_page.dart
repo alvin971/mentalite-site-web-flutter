@@ -20,7 +20,7 @@ class ConfirmationPage extends StatelessWidget {
       'https://mentalite-site-web.pages.dev/?ref=${Uri.encodeComponent(prenom.toLowerCase())}';
 
   String get _tiktokShareUrl =>
-      'https://www.tiktok.com/share?url=${Uri.encodeComponent(_shareUrl)}&text=${Uri.encodeComponent("Je viens de réserver ma place sur Mentality, la première plateforme de psychologie gratuite ! $prenom")}';
+      'https://www.tiktok.com/share?url=${Uri.encodeComponent(_shareUrl)}&text=${Uri.encodeComponent("Je viens de réserver ma place sur Mental E.T., la première plateforme de psychologie gratuite ! $prenom")}';
 
   Future<void> _copyLink(BuildContext context) async {
     await Clipboard.setData(ClipboardData(text: _shareUrl));
@@ -69,7 +69,7 @@ class ConfirmationPage extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    'Mentality',
+                    'Mental E.T.',
                     style: AppText.serif(
                       size: 20,
                       weight: FontWeight.w600,
@@ -169,7 +169,7 @@ class ConfirmationPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Vous serez parmi les premiers à accéder à Mentality lors du lancement. Nous vous contacterons par email.',
+                          'Vous serez parmi les premiers à accéder à Mental E.T. lors du lancement. Nous vous contacterons par email.',
                           style: AppText.sans(
                             size: 16,
                             color: AppColors.textSecondary,
@@ -214,7 +214,7 @@ class ConfirmationPage extends StatelessWidget {
                               ),
                               const SizedBox(height: 6),
                               Text(
-                                'Accès anticipé · Mentality',
+                                'Accès anticipé · Mental E.T.',
                                 style: AppText.sans(
                                   size: 12,
                                   color: AppColors.textTertiary,
@@ -250,7 +250,7 @@ class ConfirmationPage extends StatelessWidget {
                         const SizedBox(height: 48),
                         // Simple footer
                         Text(
-                          '© 2025 Mentality. Supervisé par des psychiatres et psychologues.',
+                          '© 2025 Mental E.T. Supervisé par des psychiatres et psychologues.',
                           style: AppText.sans(
                             size: 12,
                             color: AppColors.textTertiary,
