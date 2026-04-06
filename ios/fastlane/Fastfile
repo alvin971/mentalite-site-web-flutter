@@ -53,9 +53,10 @@ platform :ios do
       profile_uuid: ENV["SIGH_UUID"],
     )
 
-    # 6. Incrémenter le build number (évite les conflits sur TestFlight)
+    # 6. Build number = timestamp YYYYMMDDHHMM → toujours unique sur TestFlight
     increment_build_number(
       xcodeproj: "Runner.xcodeproj",
+      build_number: Time.now.strftime("%Y%m%d%H%M"),
     )
 
     # 7. Compiler et signer l'app
