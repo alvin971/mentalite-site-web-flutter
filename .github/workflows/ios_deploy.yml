@@ -32,11 +32,16 @@ jobs:
         run: |
           mkdir -p ~/.appstoreconnect/private_keys
           echo "${{ secrets.APP_STORE_API_KEY_CONTENT }}" > ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.APP_STORE_KEY_ID }}.p8
-        env:
-          APP_STORE_API_KEY_CONTENT: ${{ secrets.APP_STORE_API_KEY_CONTENT }}
-          APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
 
-      # 5. Installer Ruby + Fastlane
+      # 5. Créer l'Appfile Fastlane dynamiquement (gitignored, généré en CI)
+      - name: Create Fastlane Appfile
+        run: |
+          cat > ios/fastlane/Appfile << EOF
+          app_identifier "${{ secrets.BUNDLE_ID }}"
+          team_id "${{ secrets.APPLE_TEAM_ID }}"
+          EOF
+
+      # 6. Installer Ruby + dépendances via Gemfile
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -44,23 +49,23 @@ jobs:
           bundler-cache: true
           working-directory: ios
 
-      - name: Install Fastlane
-        run: gem install fastlane
+      - name: Install Fastlane via Bundler
+        run: bundle install
         working-directory: ios
 
-      # 6. Installer les pods iOS
+      # 7. Installer les pods iOS
       - name: Install CocoaPods
         run: |
           cd ios
           pod install --repo-update
 
-      # 7. Build Flutter iOS (génère le code natif)
+      # 8. Build Flutter iOS (génère le code natif, sans signature)
       - name: Flutter build iOS
         run: flutter build ios --release --no-codesign
 
-      # 8. Fastlane : signature + upload TestFlight
+      # 9. Fastlane : keychain + signature + upload TestFlight
       - name: Fastlane release
-        run: fastlane ios release
+        run: bundle exec fastlane ios release
         working-directory: ios
         env:
           APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}

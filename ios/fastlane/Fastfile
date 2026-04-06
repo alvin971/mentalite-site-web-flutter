@@ -3,6 +3,7 @@ default_platform(:ios)
 platform :ios do
   desc "Build, signe et upload vers TestFlight (utilisé par GitHub Actions)"
   lane :release do
+    # 1. Authentification App Store Connect via clé API
     api_key = app_store_connect_api_key(
       key_id: ENV["APP_STORE_KEY_ID"],
       issuer_id: ENV["APP_STORE_ISSUER_ID"],
@@ -11,13 +12,27 @@ platform :ios do
       in_house: false,
     )
 
-    # Télécharger/créer le certificat de distribution
+    # 2. Keychain temporaire (obligatoire en CI — GitHub Actions n'a pas de keychain par défaut)
+    keychain_name = "ci_keychain"
+    keychain_password = "ci_keychain_password"
+    create_keychain(
+      name: keychain_name,
+      password: keychain_password,
+      default_keychain: true,
+      unlock: true,
+      timeout: 3600,
+      lock_when_sleeps: false,
+    )
+
+    # 3. Télécharger/créer le certificat de distribution → l'installe dans le keychain CI
     cert(
       api_key: api_key,
       team_id: ENV["APPLE_TEAM_ID"],
+      keychain_path: "~/Library/Keychains/#{keychain_name}-db",
+      keychain_password: keychain_password,
     )
 
-    # Télécharger/créer le profil de provisionnement (stocke l'UUID dans ENV["SIGH_UUID"])
+    # 4. Télécharger/créer le profil de provisioning → stocke l'UUID dans ENV["SIGH_UUID"]
     sigh(
       api_key: api_key,
       app_identifier: ENV["BUNDLE_ID"],
@@ -25,7 +40,7 @@ platform :ios do
       force: true,
     )
 
-    # Configurer le projet Xcode avec le bon profil (manuel, pas automatique)
+    # 5. Appliquer le profil au projet Xcode (passe en signing manuel)
     update_code_signing_settings(
       use_automatic_signing: false,
       path: "Runner.xcodeproj",
@@ -35,12 +50,12 @@ platform :ios do
       profile_uuid: ENV["SIGH_UUID"],
     )
 
-    # Incrémenter le build number
+    # 6. Incrémenter le build number (évite les conflits sur TestFlight)
     increment_build_number(
       xcodeproj: "Runner.xcodeproj",
     )
 
-    # Compiler et archiver
+    # 7. Compiler et signer l'app
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
@@ -56,7 +71,7 @@ platform :ios do
       output_name: "mentalite.ipa",
     )
 
-    # Upload vers TestFlight
+    # 8. Upload vers TestFlight
     upload_to_testflight(
       api_key: api_key,
       ipa: "./build/mentalite.ipa",
