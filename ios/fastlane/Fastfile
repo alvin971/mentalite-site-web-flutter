@@ -25,11 +25,14 @@ platform :ios do
     )
 
     # 3. Télécharger/créer le certificat de distribution → l'installe dans le keychain CI
+    # force: true révoque l'ancien cert avant d'en créer un nouveau
+    # → évite "reached maximum number of Distribution certificates" en CI
     cert(
       api_key: api_key,
       team_id: ENV["APPLE_TEAM_ID"],
       keychain_path: "~/Library/Keychains/#{keychain_name}-db",
       keychain_password: keychain_password,
+      force: true,
     )
 
     # 4. Télécharger/créer le profil de provisioning → stocke l'UUID dans ENV["SIGH_UUID"]
