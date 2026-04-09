@@ -54,28 +54,38 @@ class _FormSectionState extends State<FormSection> {
 
     setState(() => _loading = true);
 
-    // Demander la permission notifications (iOS affiche sa popup native)
-    // Ne bloque pas l'inscription si l'utilisateur refuse
-    final fcmToken = await NotificationService.requestAndGetToken();
-
-    final result = await submitInscription(
-      prenom: _prenomCtrl.text.trim(),
-      nom: _nomCtrl.text.trim(),
-      email: _emailCtrl.text.trim(),
-      telephone: _telCtrl.text.trim(),
-      reseau: _reseau ?? '',
-      fcmToken: fcmToken,
-    );
-    setState(() => _loading = false);
-
-    if (result.success) {
-      if (mounted) {
-        context.go(
-          '/confirmation?prenom=${Uri.encodeComponent(_prenomCtrl.text.trim())}&place=${result.placeNumber ?? 0}',
-        );
+    try {
+      // Demander la permission notifications — timeout 8s, non bloquant
+      String? fcmToken;
+      try {
+        fcmToken = await NotificationService.requestAndGetToken()
+            .timeout(const Duration(seconds: 8));
+      } catch (_) {
+        // Notification refusée ou timeout — on continue sans token
       }
-    } else {
-      setState(() => _errorMessage = result.errorMessage);
+
+      final result = await submitInscription(
+        prenom: _prenomCtrl.text.trim(),
+        nom: _nomCtrl.text.trim(),
+        email: _emailCtrl.text.trim(),
+        telephone: _telCtrl.text.trim(),
+        reseau: _reseau ?? '',
+        fcmToken: fcmToken,
+      );
+
+      if (result.success) {
+        if (mounted) {
+          context.go(
+            '/confirmation?prenom=${Uri.encodeComponent(_prenomCtrl.text.trim())}&place=${result.placeNumber ?? 0}',
+          );
+        }
+      } else {
+        setState(() => _errorMessage = result.errorMessage);
+      }
+    } catch (_) {
+      setState(() => _errorMessage = 'Une erreur est survenue. Veuillez réessayer.');
+    } finally {
+      if (mounted) setState(() => _loading = false);
     }
   }
 

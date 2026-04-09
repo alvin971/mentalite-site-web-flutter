@@ -40,7 +40,7 @@ Future<InscriptionResult> submitInscription({
         'accepted_terms': true,
         if (fcmToken != null) 'fcm_token': fcmToken,
       }),
-    );
+    ).timeout(const Duration(seconds: 15));
 
     if (response.statusCode == 201) {
       final data = jsonDecode(response.body) as List;
@@ -70,7 +70,7 @@ Future<int> fetchInscriptionCount() async {
     final response = await http.post(
       Uri.parse('$_supabaseUrl/rest/v1/rpc/get_inscription_count'),
       headers: _headers,
-    );
+    ).timeout(const Duration(seconds: 10));
     if (response.statusCode == 200) {
       return int.tryParse(response.body.trim()) ?? 1200;
     }
