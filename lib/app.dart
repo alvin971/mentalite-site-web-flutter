@@ -3,9 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'theme/colors.dart';
 import 'pages/home_page.dart';
 import 'pages/confirmation_page.dart';
+import 'pages/splash_screen.dart';
 
 final _router = GoRouter(
+  initialLocation: '/splash',
   routes: [
+    GoRoute(path: '/splash', builder: (_, __) => const SplashScreen()),
     GoRoute(path: '/', builder: (_, __) => const HomePage()),
     GoRoute(
       path: '/confirmation',
