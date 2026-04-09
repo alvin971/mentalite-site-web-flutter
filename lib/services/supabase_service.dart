@@ -25,6 +25,7 @@ Future<InscriptionResult> submitInscription({
   required String email,
   required String telephone,
   required String reseau,
+  String? fcmToken,
 }) async {
   try {
     final response = await http.post(
@@ -37,6 +38,7 @@ Future<InscriptionResult> submitInscription({
         'telephone': telephone,
         'reseau_social': reseau,
         'accepted_terms': true,
+        if (fcmToken != null) 'fcm_token': fcmToken,
       }),
     );
 

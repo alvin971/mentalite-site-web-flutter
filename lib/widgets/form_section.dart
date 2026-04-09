@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../theme/colors.dart';
 import '../theme/typography.dart';
 import '../services/supabase_service.dart';
+import '../services/notification_service.dart';
 
 class FormSection extends StatefulWidget {
   final GlobalKey? sectionKey;
@@ -52,12 +53,18 @@ class _FormSectionState extends State<FormSection> {
     }
 
     setState(() => _loading = true);
+
+    // Demander la permission notifications (iOS affiche sa popup native)
+    // Ne bloque pas l'inscription si l'utilisateur refuse
+    final fcmToken = await NotificationService.requestAndGetToken();
+
     final result = await submitInscription(
       prenom: _prenomCtrl.text.trim(),
       nom: _nomCtrl.text.trim(),
       email: _emailCtrl.text.trim(),
       telephone: _telCtrl.text.trim(),
       reseau: _reseau ?? '',
+      fcmToken: fcmToken,
     );
     setState(() => _loading = false);
 
