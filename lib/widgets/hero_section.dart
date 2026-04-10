@@ -44,7 +44,8 @@ class _HeroSectionState extends State<HeroSection> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final isMobile = width < 768;
-    final remaining = 10000 - _count;
+    final oversubscribed = _count > 10000;
+    final excess = _count - 10000;
     final progress = (_count / 10000).clamp(0.0, 1.0);
     final percent = (_count / 10000 * 100).round();
 
@@ -169,14 +170,18 @@ class _HeroSectionState extends State<HeroSection> {
                           '$percent% des places prises',
                           style: AppText.mono(
                             size: 12,
-                            color: AppColors.textTertiary,
+                            color: oversubscribed ? AppColors.accent : AppColors.textTertiary,
+                            weight: oversubscribed ? FontWeight.w600 : FontWeight.normal,
                           ),
                         ),
                         Text(
-                          '${_formatCount(remaining)} restantes',
+                          oversubscribed
+                              ? '+${_formatCount(excess)} en liste d\'attente'
+                              : '${_formatCount(10000 - _count)} restantes',
                           style: AppText.mono(
                             size: 12,
-                            color: AppColors.textTertiary,
+                            color: oversubscribed ? AppColors.accent : AppColors.textTertiary,
+                            weight: oversubscribed ? FontWeight.w600 : FontWeight.normal,
                           ),
                         ),
                       ],

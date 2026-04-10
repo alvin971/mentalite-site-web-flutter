@@ -27,7 +27,7 @@ class CounterService {
 
   Future<void> _fetch() async {
     final real = await fetchInscriptionCount();
-    final displayed = (real + _offset).clamp(0, _max);
+    final displayed = real + _offset; // Pas de plafond — affiche la sursouscription
     if (displayed != _currentCount) {
       _currentCount = displayed;
       _controller.add(displayed);
