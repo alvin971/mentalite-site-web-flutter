@@ -25,6 +25,7 @@ class _FormSectionState extends State<FormSection> {
   bool _termsAccepted = false;
   bool _loading = false;
   String? _errorMessage;
+  ({String prenom, int place})? _alreadyRegistered;
 
   static const _reseaux = [
     'TikTok',
@@ -33,6 +34,16 @@ class _FormSectionState extends State<FormSection> {
     'Recommandation',
     'Autre',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    RegistrationStorage.getSaved().then((saved) {
+      if (mounted && saved != null) {
+        setState(() => _alreadyRegistered = saved);
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -98,6 +109,15 @@ class _FormSectionState extends State<FormSection> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final isMobile = width < 768;
+
+    if (_alreadyRegistered != null) {
+      return _AlreadyRegisteredSection(
+        sectionKey: widget.sectionKey,
+        prenom: _alreadyRegistered!.prenom,
+        place: _alreadyRegistered!.place,
+        isMobile: isMobile,
+      );
+    }
 
     return Container(
       key: widget.sectionKey,
@@ -440,6 +460,123 @@ class _FormSectionState extends State<FormSection> {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AlreadyRegisteredSection extends StatelessWidget {
+  final GlobalKey? sectionKey;
+  final String prenom;
+  final int place;
+  final bool isMobile;
+
+  const _AlreadyRegisteredSection({
+    required this.sectionKey,
+    required this.prenom,
+    required this.place,
+    required this.isMobile,
+  });
+
+  String get _placeFormatted => '#${place.toString().padLeft(4, '0')}';
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: sectionKey,
+      width: double.infinity,
+      color: AppColors.bg,
+      padding: EdgeInsets.symmetric(
+        vertical: isMobile ? 48 : 80,
+        horizontal: isMobile ? 20 : 48,
+      ),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 640),
+          child: Container(
+            padding: EdgeInsets.all(isMobile ? 24 : 40),
+            decoration: BoxDecoration(
+              color: AppColors.accentLight,
+              border: Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: AppColors.accent,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.check, color: Colors.white, size: 20),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            prenom.isNotEmpty ? 'Bonjour $prenom !' : 'Bonjour !',
+                            style: AppText.serif(size: 22, weight: FontWeight.w600),
+                          ),
+                          Text(
+                            'Tu es déjà inscrit sur cet appareil.',
+                            style: AppText.sans(
+                              size: 14,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: AppColors.bgWhite,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Ta place dans la liste',
+                        style: AppText.sans(
+                          size: 14,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      Text(
+                        _placeFormatted,
+                        style: AppText.mono(
+                          size: 16,
+                          color: AppColors.accent,
+                          weight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Tu recevras une notification dès que l\'app Mental E.T. est disponible.',
+                  style: AppText.sans(
+                    size: 13,
+                    color: AppColors.textSecondary,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

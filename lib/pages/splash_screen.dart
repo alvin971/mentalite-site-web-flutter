@@ -24,17 +24,8 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(seconds: 5),
     )..repeat();
 
-    Future.delayed(const Duration(milliseconds: 2500), () async {
-      if (!mounted) return;
-      final saved = await RegistrationStorage.getSaved();
-      if (!mounted) return;
-      if (saved != null) {
-        context.go(
-          '/confirmation?prenom=${Uri.encodeComponent(saved.prenom)}&place=${saved.place}',
-        );
-      } else {
-        context.go('/');
-      }
+    Future.delayed(const Duration(milliseconds: 2500), () {
+      if (mounted) context.go('/');
     });
   }
 
