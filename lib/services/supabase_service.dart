@@ -72,8 +72,8 @@ Future<int> fetchInscriptionCount() async {
       headers: _headers,
     ).timeout(const Duration(seconds: 10));
     if (response.statusCode == 200) {
-      return int.tryParse(response.body.trim()) ?? 1200;
+      return int.tryParse(response.body.trim()) ?? 0;
     }
   } catch (_) {}
-  return 1200;
+  return 0;
 }

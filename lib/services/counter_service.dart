@@ -7,7 +7,9 @@ class CounterService {
   CounterService._internal();
 
   final _controller = StreamController<int>.broadcast();
-  int _currentCount = 1200;
+  static const _offset = 858; // Offset d'affichage — 0 inscrit réel = 859 affiché
+  static const _max = 10000;
+  int _currentCount = 859;
   Timer? _timer;
 
   Stream<int> get stream => _controller.stream;
@@ -24,10 +26,11 @@ class CounterService {
   }
 
   Future<void> _fetch() async {
-    final count = await fetchInscriptionCount();
-    if (count != _currentCount) {
-      _currentCount = count;
-      _controller.add(count);
+    final real = await fetchInscriptionCount();
+    final displayed = (real + _offset).clamp(0, _max);
+    if (displayed != _currentCount) {
+      _currentCount = displayed;
+      _controller.add(displayed);
     }
   }
 
