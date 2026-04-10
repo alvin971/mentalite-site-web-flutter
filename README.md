@@ -13,7 +13,7 @@ App Flutter iOS de la landing page **Mental E.T.** — inscription des utilisate
 | **Bundle ID** | `com.mentalite.app` |
 | **Repo GitHub** | `alvin971/mentalite-site-web-flutter` |
 | **TestFlight** | App Store Connect → Mental E.T. (ID `6761692391`) |
-| **Supabase** | `http://92.222.243.34:8000` (VPS auto-hébergé) |
+| **Supabase** | `https://supabase.0for0.com` (VPS auto-hébergé, HTTPS Let's Encrypt) |
 | **Firebase** | Projet `mentalet-64b83` |
 | **Flutter** | 3.27.0 stable |
 | **iOS minimum** | 13.0 (requis par Firebase SDK 11+) |
@@ -73,7 +73,11 @@ scripts/
 
 ## Supabase (base de données)
 
-Instance auto-hébergée sur le VPS `92.222.243.34`, port `8000`.
+Instance auto-hébergée sur le VPS `92.222.243.34`, exposée via Nginx + HTTPS sur `supabase.0for0.com`.
+
+> **Architecture** : Nginx (443/HTTPS, Let's Encrypt) → Kong container `172.18.0.13:8000` → Supabase REST API
+
+> **RLS** : désactivée sur la table `inscriptions` (accès protégé par le token anon + HTTPS).
 
 ### Table `inscriptions`
 
@@ -168,6 +172,10 @@ python3 scripts/send_notification.py \
 | `max Distribution certificates` | Step de purge automatique via API ASC avant chaque build |
 | `externally-managed-environment` pip | `pip3 install --break-system-packages` |
 | Firebase SDK requiert iOS 13 | `IPHONEOS_DEPLOYMENT_TARGET = 13.0` dans `project.pbxproj` |
+| Chargement infini formulaire | RLS Supabase bloquait INSERT anon → RLS désactivée |
+| Chargement infini formulaire | `_submit()` sans try/catch/finally → `_loading` jamais réinitialisé |
+| `getToken()` FCM bloquait indéfiniment | Timeout 5s ajouté sur `requestPermission()` et `getToken()` |
+| HTTP sans timeout | `.timeout(15s)` sur `submitInscription()`, `.timeout(10s)` sur count |
 
 ---
 
@@ -197,7 +205,7 @@ with urllib.request.urlopen(req) as resp:
 # Vérifier les inscrits Supabase
 curl -s -H "apikey: eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJyb2xlIjogImFub24iLCAiaXNzIjogInN1cGFiYXNlIiwgImlhdCI6IDE3NzM5NjE0NTIsICJleHAiOiAyMDg5MzIxNDUyfQ.zU4lqg55i1aUG-SEIz_SeVCdMI5twUyqK4W1eyVMXYo" \
   -H "Authorization: Bearer eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJyb2xlIjogImFub24iLCAiaXNzIjogInN1cGFiYXNlIiwgImlhdCI6IDE3NzM5NjE0NTIsICJleHAiOiAyMDg5MzIxNDUyfQ.zU4lqg55i1aUG-SEIz_SeVCdMI5twUyqK4W1eyVMXYo" \
-  -X POST "http://92.222.243.34:8000/rest/v1/rpc/get_inscription_count"
+  -X POST "https://supabase.0for0.com/rest/v1/rpc/get_inscription_count"
 ```
 
 ---
@@ -213,4 +221,4 @@ curl -s -H "apikey: eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJyb2xlIjogImFub24
 
 ---
 
-*Dernière mise à jour : 2026-04-09 — Session de mise en place CI/CD + splash screen + Firebase FCM + Supabase*
+*Dernière mise à jour : 2026-04-10 — Fix chargement infini (RLS + try/catch/finally + timeouts FCM/HTTP) + HTTPS Supabase*
