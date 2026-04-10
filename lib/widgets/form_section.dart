@@ -4,6 +4,7 @@ import '../theme/colors.dart';
 import '../theme/typography.dart';
 import '../services/supabase_service.dart';
 import '../services/notification_service.dart';
+import '../services/registration_storage.dart';
 
 class FormSection extends StatefulWidget {
   final GlobalKey? sectionKey;
@@ -74,6 +75,10 @@ class _FormSectionState extends State<FormSection> {
       );
 
       if (result.success) {
+        await RegistrationStorage.save(
+          prenom: _prenomCtrl.text.trim(),
+          place: result.placeNumber ?? 0,
+        );
         if (mounted) {
           context.go(
             '/confirmation?prenom=${Uri.encodeComponent(_prenomCtrl.text.trim())}&place=${result.placeNumber ?? 0}',

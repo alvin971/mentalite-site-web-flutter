@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/colors.dart';
 import '../theme/typography.dart';
+import '../services/registration_storage.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -23,8 +24,17 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(seconds: 5),
     )..repeat();
 
-    Future.delayed(const Duration(milliseconds: 2500), () {
-      if (mounted) context.go('/');
+    Future.delayed(const Duration(milliseconds: 2500), () async {
+      if (!mounted) return;
+      final saved = await RegistrationStorage.getSaved();
+      if (!mounted) return;
+      if (saved != null) {
+        context.go(
+          '/confirmation?prenom=${Uri.encodeComponent(saved.prenom)}&place=${saved.place}',
+        );
+      } else {
+        context.go('/');
+      }
     });
   }
 
