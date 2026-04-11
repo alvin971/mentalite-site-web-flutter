@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import '../theme/typography.dart';
+import 'scroll_reveal.dart';
 
 class Section02Pillars extends StatelessWidget {
   const Section02Pillars({super.key});
@@ -65,38 +66,11 @@ class Section02Pillars extends StatelessWidget {
               const SizedBox(height: 40),
               if (isMobile)
                 Column(
-                  children: const [
-                    _PillarCard(
-                      icon: Icons.psychology,
-                      number: '01',
-                      title: 'Évaluation cognitive complète',
-                      body:
-                          '12 tests basés sur le WAIS-IV · 4 indices composites · profil détaillé de vos forces et fragilités cognitives',
-                    ),
-                    SizedBox(height: 16),
-                    _PillarCard(
-                      icon: Icons.chat_bubble_outline,
-                      number: '02',
-                      title: 'Accompagnement psychologique IA',
-                      body:
-                          'Un espace d\'écoute active disponible 24h/24 · pour comprendre vos résultats et explorer ce que vous ressentez',
-                    ),
-                    SizedBox(height: 16),
-                    _PillarCard(
-                      icon: Icons.shield_outlined,
-                      number: '03',
-                      title: 'Supervision clinique réelle',
-                      body:
-                          'Chaque test est validé et amélioré en continu par des psychiatres et psychologues partenaires',
-                    ),
-                  ],
-                )
-              else
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Expanded(
-                      child: _PillarCard(
+                  children: [
+                    ScrollReveal(
+                      key: const ValueKey('pillar-0'),
+                      slideOffset: 0.10,
+                      child: const _PillarCard(
                         icon: Icons.psychology,
                         number: '01',
                         title: 'Évaluation cognitive complète',
@@ -104,9 +78,12 @@ class Section02Pillars extends StatelessWidget {
                             '12 tests basés sur le WAIS-IV · 4 indices composites · profil détaillé de vos forces et fragilités cognitives',
                       ),
                     ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: _PillarCard(
+                    const SizedBox(height: 16),
+                    ScrollReveal(
+                      key: const ValueKey('pillar-1'),
+                      delay: const Duration(milliseconds: 100),
+                      slideOffset: 0.10,
+                      child: const _PillarCard(
                         icon: Icons.chat_bubble_outline,
                         number: '02',
                         title: 'Accompagnement psychologique IA',
@@ -114,14 +91,66 @@ class Section02Pillars extends StatelessWidget {
                             'Un espace d\'écoute active disponible 24h/24 · pour comprendre vos résultats et explorer ce que vous ressentez',
                       ),
                     ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: _PillarCard(
+                    const SizedBox(height: 16),
+                    ScrollReveal(
+                      key: const ValueKey('pillar-2'),
+                      delay: const Duration(milliseconds: 200),
+                      slideOffset: 0.10,
+                      child: const _PillarCard(
                         icon: Icons.shield_outlined,
                         number: '03',
                         title: 'Supervision clinique réelle',
                         body:
                             'Chaque test est validé et amélioré en continu par des psychiatres et psychologues partenaires',
+                      ),
+                    ),
+                  ],
+                )
+              else
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: ScrollReveal(
+                        key: const ValueKey('pillar-0'),
+                        slideOffset: 0.10,
+                        child: const _PillarCard(
+                          icon: Icons.psychology,
+                          number: '01',
+                          title: 'Évaluation cognitive complète',
+                          body:
+                              '12 tests basés sur le WAIS-IV · 4 indices composites · profil détaillé de vos forces et fragilités cognitives',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: ScrollReveal(
+                        key: const ValueKey('pillar-1'),
+                        delay: const Duration(milliseconds: 120),
+                        slideOffset: 0.10,
+                        child: const _PillarCard(
+                          icon: Icons.chat_bubble_outline,
+                          number: '02',
+                          title: 'Accompagnement psychologique IA',
+                          body:
+                              'Un espace d\'écoute active disponible 24h/24 · pour comprendre vos résultats et explorer ce que vous ressentez',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: ScrollReveal(
+                        key: const ValueKey('pillar-2'),
+                        delay: const Duration(milliseconds: 240),
+                        slideOffset: 0.10,
+                        child: const _PillarCard(
+                          icon: Icons.shield_outlined,
+                          number: '03',
+                          title: 'Supervision clinique réelle',
+                          body:
+                              'Chaque test est validé et amélioré en continu par des psychiatres et psychologues partenaires',
+                        ),
                       ),
                     ),
                   ],

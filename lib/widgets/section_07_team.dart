@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import '../theme/typography.dart';
+import 'scroll_reveal.dart';
 
 class Section07Team extends StatelessWidget {
   const Section07Team({super.key});
@@ -75,17 +76,20 @@ class Section07Team extends StatelessWidget {
               const SizedBox(height: 40),
               if (isMobile)
                 Column(
-                  children: _members
-                      .map((m) => Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: _TeamCard(
-                              initials: m.$1,
-                              role: m.$2,
-                              tag: m.$3,
-                              quote: m.$4,
-                            ),
-                          ))
-                      .toList(),
+                  children: List.generate(_members.length, (i) => ScrollReveal(
+                    key: ValueKey('team-card-$i'),
+                    delay: Duration(milliseconds: i * 100),
+                    slideOffset: 0.08,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: _TeamCard(
+                        initials: _members[i].$1,
+                        role: _members[i].$2,
+                        tag: _members[i].$3,
+                        quote: _members[i].$4,
+                      ),
+                    ),
+                  )),
                 )
               else
                 GridView.count(
@@ -95,14 +99,17 @@ class Section07Team extends StatelessWidget {
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                   childAspectRatio: 1.7,
-                  children: _members
-                      .map((m) => _TeamCard(
-                            initials: m.$1,
-                            role: m.$2,
-                            tag: m.$3,
-                            quote: m.$4,
-                          ))
-                      .toList(),
+                  children: List.generate(_members.length, (i) => ScrollReveal(
+                    key: ValueKey('team-card-$i'),
+                    delay: Duration(milliseconds: i * 100),
+                    slideOffset: 0.08,
+                    child: _TeamCard(
+                      initials: _members[i].$1,
+                      role: _members[i].$2,
+                      tag: _members[i].$3,
+                      quote: _members[i].$4,
+                    ),
+                  )),
                 ),
             ],
           ),

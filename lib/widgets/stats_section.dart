@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import '../theme/typography.dart';
+import 'scroll_reveal.dart';
 
 class StatsSection extends StatelessWidget {
   const StatsSection({super.key});
@@ -34,9 +35,12 @@ class StatsSection extends StatelessWidget {
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
             childAspectRatio: isMobile ? 1.6 : 2.0,
-            children: _stats
-                .map((s) => _StatCard(value: s.$1, label: s.$2))
-                .toList(),
+            children: List.generate(_stats.length, (i) => ScrollReveal(
+                  key: ValueKey('stat-card-$i'),
+                  delay: Duration(milliseconds: i * 100),
+                  slideOffset: 0.10,
+                  child: _StatCard(value: _stats[i].$1, label: _stats[i].$2),
+                )),
           ),
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import '../theme/typography.dart';
+import 'scroll_reveal.dart';
 
 class Section08Ethics extends StatelessWidget {
   const Section08Ethics({super.key});
@@ -83,19 +84,20 @@ class Section08Ethics extends StatelessWidget {
               ),
               const SizedBox(height: 40),
               Column(
-                children: _items
-                    .map(
-                      (item) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: _EthicsCard(
-                          icon: item.$1,
-                          iconBg: item.$2,
-                          title: item.$3,
-                          body: item.$4,
-                        ),
-                      ),
-                    )
-                    .toList(),
+                children: List.generate(_items.length, (i) => ScrollReveal(
+                  key: ValueKey('ethics-card-$i'),
+                  delay: Duration(milliseconds: i * 80),
+                  slideOffset: 0.06,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _EthicsCard(
+                      icon: _items[i].$1,
+                      iconBg: _items[i].$2,
+                      title: _items[i].$3,
+                      body: _items[i].$4,
+                    ),
+                  ),
+                )),
               ),
             ],
           ),
