@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/colors.dart';
@@ -21,6 +22,8 @@ class _FormSectionState extends State<FormSection> {
   final _nomCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _telCtrl = TextEditingController();
+  // Honeypot anti-spam : champ invisible, ne doit jamais être rempli
+  final _honeypotCtrl = TextEditingController();
   String? _reseau;
   bool _termsAccepted = false;
   bool _loading = false;
@@ -51,10 +54,13 @@ class _FormSectionState extends State<FormSection> {
     _nomCtrl.dispose();
     _emailCtrl.dispose();
     _telCtrl.dispose();
+    _honeypotCtrl.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
+    // Honeypot : un bot remplit ce champ invisible → on bloque silencieusement
+    if (_honeypotCtrl.text.isNotEmpty) return;
     setState(() => _errorMessage = null);
     if (!_formKey.currentState!.validate()) return;
     if (!_termsAccepted) {
@@ -89,6 +95,12 @@ class _FormSectionState extends State<FormSection> {
         await RegistrationStorage.save(
           prenom: _prenomCtrl.text.trim(),
           place: result.placeNumber ?? 0,
+        );
+        // Email de confirmation — non bloquant (silencieux en cas d'échec)
+        sendConfirmationEmail(
+          prenom: _prenomCtrl.text.trim(),
+          email: _emailCtrl.text.trim(),
+          placeNumber: result.placeNumber ?? 0,
         );
         if (mounted) {
           context.go(
@@ -334,6 +346,18 @@ class _FormSectionState extends State<FormSection> {
                         ],
                       ),
                       const SizedBox(height: 20),
+                      // Honeypot anti-spam — champ invisible pour les bots
+                      Opacity(
+                        opacity: 0,
+                        child: SizedBox(
+                          height: 0,
+                          child: TextFormField(
+                            controller: _honeypotCtrl,
+                            autocorrect: false,
+                            enableSuggestions: false,
+                          ),
+                        ),
+                      ),
                       // Checkbox
                       GestureDetector(
                         onTap: () =>
@@ -363,12 +387,36 @@ class _FormSectionState extends State<FormSection> {
                             ),
                             const SizedBox(width: 10),
                             Expanded(
-                              child: Text(
-                                'J\'accepte les conditions d\'utilisation et la politique de confidentialité de Mental E.T.',
-                                style: AppText.sans(
-                                  size: 13,
-                                  color: AppColors.textSecondary,
-                                  height: 1.5,
+                              child: RichText(
+                                text: TextSpan(
+                                  style: AppText.sans(
+                                    size: 13,
+                                    color: AppColors.textSecondary,
+                                    height: 1.5,
+                                  ),
+                                  children: [
+                                    const TextSpan(text: 'J\'accepte les '),
+                                    TextSpan(
+                                      text: 'conditions d\'utilisation',
+                                      style: AppText.sans(size: 13, color: AppColors.accent).copyWith(
+                                        decoration: TextDecoration.underline,
+                                        decorationColor: AppColors.accent,
+                                      ),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () => context.push('/confidentialite'),
+                                    ),
+                                    const TextSpan(text: ' et la '),
+                                    TextSpan(
+                                      text: 'politique de confidentialité',
+                                      style: AppText.sans(size: 13, color: AppColors.accent).copyWith(
+                                        decoration: TextDecoration.underline,
+                                        decorationColor: AppColors.accent,
+                                      ),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () => context.push('/confidentialite'),
+                                    ),
+                                    const TextSpan(text: ' de Mental E.T.'),
+                                  ],
                                 ),
                               ),
                             ),

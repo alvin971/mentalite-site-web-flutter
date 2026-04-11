@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../theme/colors.dart';
 import '../theme/typography.dart';
 
@@ -43,8 +44,8 @@ class FooterWidget extends StatelessWidget {
                         Expanded(child: _FooterCol(
                           title: 'Légal',
                           links: [
-                            ('Confidentialité', null),
-                            ('CGU', null),
+                            ('Confidentialité', '/confidentialite'),
+                            ('CGU', '/confidentialite'),
                           ],
                         )),
                       ],
@@ -154,6 +155,7 @@ class _FooterBrand extends StatelessWidget {
 
 class _FooterCol extends StatelessWidget {
   final String title;
+  // (label, route GoRouter ou null si non encore disponible)
   final List<(String, String?)> links;
 
   const _FooterCol({required this.title, required this.links});
@@ -173,13 +175,30 @@ class _FooterCol extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        ...links.map((link) => Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Text(
-                link.$1,
-                style: AppText.sans(size: 14, color: AppColors.footerMuted),
-              ),
-            )),
+        ...links.map((link) {
+          final route = link.$2;
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: route != null
+                ? GestureDetector(
+                    onTap: () => context.push(route),
+                    child: MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: Text(
+                        link.$1,
+                        style: AppText.sans(size: 14, color: AppColors.footerMuted).copyWith(
+                          decoration: TextDecoration.underline,
+                          decorationColor: AppColors.footerMuted.withValues(alpha: 0.4),
+                        ),
+                      ),
+                    ),
+                  )
+                : Text(
+                    link.$1,
+                    style: AppText.sans(size: 14, color: AppColors.footerMuted),
+                  ),
+          );
+        }),
       ],
     );
   }

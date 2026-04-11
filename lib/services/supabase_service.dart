@@ -65,6 +65,32 @@ Future<InscriptionResult> submitInscription({
   }
 }
 
+/// URL du Cloudflare Worker d'email (à remplacer après déploiement)
+const _emailWorkerUrl = 'https://mental-et-email-confirmation.YOUR_SUBDOMAIN.workers.dev';
+
+/// Envoie un email de confirmation post-inscription via Cloudflare Worker.
+/// Non bloquant : les erreurs sont silencieuses pour ne pas pénaliser l'UX.
+Future<void> sendConfirmationEmail({
+  required String prenom,
+  required String email,
+  required int placeNumber,
+}) async {
+  if (_emailWorkerUrl.contains('YOUR_SUBDOMAIN')) return; // Worker non déployé
+  try {
+    await http.post(
+      Uri.parse(_emailWorkerUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'prenom': prenom,
+        'email': email,
+        'place_number': placeNumber,
+      }),
+    ).timeout(const Duration(seconds: 10));
+  } catch (_) {
+    // Silencieux — l'email est un bonus, pas critique
+  }
+}
+
 Future<int> fetchInscriptionCount() async {
   try {
     final response = await http.post(

@@ -4,6 +4,7 @@ import 'theme/colors.dart';
 import 'pages/home_page.dart';
 import 'pages/confirmation_page.dart';
 import 'pages/splash_screen.dart';
+import 'pages/confidentialite_page.dart';
 
 final _router = GoRouter(
   initialLocation: '/splash',
@@ -18,6 +19,7 @@ final _router = GoRouter(
         return ConfirmationPage(prenom: prenom, place: place);
       },
     ),
+    GoRoute(path: '/confidentialite', builder: (_, __) => const ConfidentialitePage()),
   ],
 );
 
