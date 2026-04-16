@@ -239,15 +239,15 @@ class _OrbitPainter extends CustomPainter {
     final cx = size.width / 2;
     final cy = size.height / 2;
 
-    // Human head silhouette (front view, mannequin — no facial features)
+    // E.T. head silhouette — large domed cranium, wide-set eyes, flat nose
     final headPath = Path();
-    headPath.moveTo(cx, cy - 7);
-    // Right side: cranium → cheek → chin
-    headPath.cubicTo(cx + 5.0, cy - 7.0, cx + 5.0, cy - 1.0, cx + 4.5, cy + 2.0);
-    headPath.cubicTo(cx + 4.0, cy + 5.0, cx + 2.5, cy + 7.0, cx, cy + 7.0);
-    // Left side: chin → cheek → cranium (mirror)
-    headPath.cubicTo(cx - 2.5, cy + 7.0, cx - 4.0, cy + 5.0, cx - 4.5, cy + 2.0);
-    headPath.cubicTo(cx - 5.0, cy - 1.0, cx - 5.0, cy - 7.0, cx, cy - 7.0);
+    headPath.moveTo(cx, cy - 8.0);
+    // Right side: wide dome
+    headPath.cubicTo(cx + 9.0, cy - 8.5, cx + 9.5, cy - 2.0, cx + 8.0, cy + 1.5);
+    headPath.cubicTo(cx + 6.0, cy + 5.0, cx + 3.5, cy + 7.0, cx, cy + 7.0);
+    // Left side: mirror
+    headPath.cubicTo(cx - 3.5, cy + 7.0, cx - 6.0, cy + 5.0, cx - 8.0, cy + 1.5);
+    headPath.cubicTo(cx - 9.5, cy - 2.0, cx - 9.0, cy - 8.5, cx, cy - 8.0);
     headPath.close();
 
     final headPaint = Paint()
@@ -255,6 +255,21 @@ class _OrbitPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
     canvas.drawPath(headPath, headPaint);
+
+    // Eyes — wide-set circles, stroke only
+    final eyePaint = Paint()
+      ..color = AppColors.accent
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2;
+    canvas.drawCircle(Offset(cx - 6.0, cy - 2.5), 2.5, eyePaint);
+    canvas.drawCircle(Offset(cx + 6.0, cy - 2.5), 2.5, eyePaint);
+
+    // Nose — 2 dots at bottom of eyes, centered between them
+    final nosePaint = Paint()
+      ..color = AppColors.accent
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(Offset(cx - 1.5, cy), 0.8, nosePaint);
+    canvas.drawCircle(Offset(cx + 1.5, cy), 0.8, nosePaint);
 
     // 3 elliptical orbit paths at different rotations (3D atom effect)
     final orbitPaint = Paint()
