@@ -29,21 +29,20 @@ def generate_svg(size: int, bg_color: str = BG_COLOR, padding_ratio: float = 0.1
     s = logo_size / 32  # 32 = taille "unité" de référence du painter
 
     # ── Tête (silhouette Bézier) ──────────────────────────────────────────────
-    # Reproduit exactement le headPath du Flutter CustomPainter
-    # moveTo(cx, cy - 7s) puis cubicTo successifs
+    # Reproduit exactement le headPath du Flutter CustomPainter (_OrbitPainter)
     head = (
-        f"M {cx},{cy - 7*s} "
-        f"C {cx + 5*s},{cy - 7*s} {cx + 5*s},{cy - 1*s} {cx + 4.5*s},{cy + 2*s} "
-        f"C {cx + 4*s},{cy + 5*s} {cx + 2.5*s},{cy + 7*s} {cx},{cy + 7*s} "
-        f"C {cx - 2.5*s},{cy + 7*s} {cx - 4*s},{cy + 5*s} {cx - 4.5*s},{cy + 2*s} "
-        f"C {cx - 5*s},{cy - 1*s} {cx - 5*s},{cy - 7*s} {cx},{cy - 7*s} "
+        f"M {cx},{cy - 8*s} "
+        f"C {cx + 9*s},{cy - 8.5*s} {cx + 9.5*s},{cy - 2*s} {cx + 8*s},{cy + 1.5*s} "
+        f"C {cx + 6*s},{cy + 5*s} {cx + 3.5*s},{cy + 7*s} {cx},{cy + 7*s} "
+        f"C {cx - 3.5*s},{cy + 7*s} {cx - 6*s},{cy + 5*s} {cx - 8*s},{cy + 1.5*s} "
+        f"C {cx - 9.5*s},{cy - 2*s} {cx - 9*s},{cy - 8.5*s} {cx},{cy - 8*s} "
         f"Z"
     )
     stroke_w = 1.5 * s
 
     # ── Orbites elliptiques ───────────────────────────────────────────────────
-    a = 12.0 * s   # demi-grand axe
-    b = 4.0 * s    # demi-petit axe
+    a = 15.0 * s   # demi-grand axe (agrandi ×1.25 pour meilleure visibilité)
+    b = 5.0 * s    # demi-petit axe
     orbit_stroke = 0.9 * s
     thetas = [0.0, math.pi / 3, -math.pi / 3]
 
@@ -72,6 +71,10 @@ def generate_svg(size: int, bg_color: str = BG_COLOR, padding_ratio: float = 0.1
         dot_circles.append(f'<circle cx="{x1:.2f}" cy="{y1:.2f}" r="{dot_r}" fill="{ACCENT}"/>')
         dot_circles.append(f'<circle cx="{x2:.2f}" cy="{y2:.2f}" r="{dot_r}" fill="{ACCENT}"/>')
 
+    eye_r = 2.5 * s
+    eye_stroke = 1.2 * s
+    nose_r = 0.8 * s
+
     svg = f"""<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" viewBox="0 0 {size} {size}">
   <!-- Fond -->
@@ -83,7 +86,15 @@ def generate_svg(size: int, bg_color: str = BG_COLOR, padding_ratio: float = 0.1
   <!-- Tête silhouette -->
   <path d="{head}" fill="none" stroke="{ACCENT}" stroke-width="{stroke_w}" stroke-linejoin="round"/>
 
-  <!-- Points aux extrémités -->
+  <!-- Yeux -->
+  <circle cx="{cx - 6*s:.2f}" cy="{cy - 2.5*s:.2f}" r="{eye_r:.2f}" fill="none" stroke="{ACCENT}" stroke-width="{eye_stroke:.2f}"/>
+  <circle cx="{cx + 6*s:.2f}" cy="{cy - 2.5*s:.2f}" r="{eye_r:.2f}" fill="none" stroke="{ACCENT}" stroke-width="{eye_stroke:.2f}"/>
+
+  <!-- Nez -->
+  <circle cx="{cx - 1.5*s:.2f}" cy="{cy:.2f}" r="{nose_r:.2f}" fill="{ACCENT}"/>
+  <circle cx="{cx + 1.5*s:.2f}" cy="{cy:.2f}" r="{nose_r:.2f}" fill="{ACCENT}"/>
+
+  <!-- Points aux extrémités des orbites -->
   {''.join(dot_circles)}
 </svg>"""
     return svg
@@ -108,19 +119,19 @@ def generate_maskable(size: int) -> str:
     logo_size = size - 2 * pad
     s = logo_size / 32
 
-    a = 12.0 * s
-    b = 4.0 * s
+    a = 15.0 * s
+    b = 5.0 * s
     orbit_stroke = 0.9 * s
     stroke_w = 1.5 * s
     dot_r = 2.0 * s
     thetas = [0.0, math.pi / 3, -math.pi / 3]
 
     head = (
-        f"M {cx},{cy - 7*s} "
-        f"C {cx + 5*s},{cy - 7*s} {cx + 5*s},{cy - 1*s} {cx + 4.5*s},{cy + 2*s} "
-        f"C {cx + 4*s},{cy + 5*s} {cx + 2.5*s},{cy + 7*s} {cx},{cy + 7*s} "
-        f"C {cx - 2.5*s},{cy + 7*s} {cx - 4*s},{cy + 5*s} {cx - 4.5*s},{cy + 2*s} "
-        f"C {cx - 5*s},{cy - 1*s} {cx - 5*s},{cy - 7*s} {cx},{cy - 7*s} Z"
+        f"M {cx},{cy - 8*s} "
+        f"C {cx + 9*s},{cy - 8.5*s} {cx + 9.5*s},{cy - 2*s} {cx + 8*s},{cy + 1.5*s} "
+        f"C {cx + 6*s},{cy + 5*s} {cx + 3.5*s},{cy + 7*s} {cx},{cy + 7*s} "
+        f"C {cx - 3.5*s},{cy + 7*s} {cx - 6*s},{cy + 5*s} {cx - 8*s},{cy + 1.5*s} "
+        f"C {cx - 9.5*s},{cy - 2*s} {cx - 9*s},{cy - 8.5*s} {cx},{cy - 8*s} Z"
     )
 
     orbit_paths = []
@@ -141,11 +152,19 @@ def generate_maskable(size: int) -> str:
         dot_circles.append(f'<circle cx="{x1:.2f}" cy="{y1:.2f}" r="{dot_r}" fill="{fg}"/>')
         dot_circles.append(f'<circle cx="{x2:.2f}" cy="{y2:.2f}" r="{dot_r}" fill="{fg}"/>')
 
+    eye_r = 2.5 * s
+    eye_stroke = 1.2 * s
+    nose_r = 0.8 * s
+
     return f"""<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" viewBox="0 0 {size} {size}">
   <rect width="{size}" height="{size}" fill="{bg}"/>
   {''.join(orbit_paths)}
   <path d="{head}" fill="none" stroke="{fg}" stroke-width="{stroke_w}" stroke-linejoin="round"/>
+  <circle cx="{cx - 6*s:.2f}" cy="{cy - 2.5*s:.2f}" r="{eye_r:.2f}" fill="none" stroke="{fg}" stroke-width="{eye_stroke:.2f}"/>
+  <circle cx="{cx + 6*s:.2f}" cy="{cy - 2.5*s:.2f}" r="{eye_r:.2f}" fill="none" stroke="{fg}" stroke-width="{eye_stroke:.2f}"/>
+  <circle cx="{cx - 1.5*s:.2f}" cy="{cy:.2f}" r="{nose_r:.2f}" fill="{fg}"/>
+  <circle cx="{cx + 1.5*s:.2f}" cy="{cy:.2f}" r="{nose_r:.2f}" fill="{fg}"/>
   {''.join(dot_circles)}
 </svg>"""
 
